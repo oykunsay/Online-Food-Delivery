@@ -3,11 +3,17 @@ package com.oykunsay.foodiesapi.service;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.oykunsay.foodiesapi.entity.FoodEntity;
+import com.oykunsay.foodiesapi.io.FoodResponse;
+import com.oykunsay.foodiesapi.repository.FoodRepository;
+import com.oykunsay.foodiesapi.request.FoodRequest;
 
 import lombok.AllArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -20,7 +26,10 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 @AllArgsConstructor
 public class FoodServiceImpl implements FoodService {
 
-	private final S3Client s3Client;
+	@Autowired
+	private S3Client s3Client;
+	@Autowired
+	private FoodRepository foodRepository;
 
 	@Value("${aws.s3.bucketname}")
 	private String bucketName;
@@ -44,6 +53,27 @@ public class FoodServiceImpl implements FoodService {
 					"An error occured while uploading file.");
 
 		}
+	}
+
+	@Override
+	public FoodResponse addFood(FoodRequest request, MultipartFile file) {
+		FoodEntity newFoodEntity = convertToEntity(request);
+		String imageUrl = uploadFile(file);
+		newFoodEntity.setImageUrl(imageUrl);
+		foodRepository.save(newFoodEntity);
+		return convertToResponse(newFoodEntity);
+
+	}
+
+	private FoodEntity convertToEntity(FoodRequest request) {
+		return FoodEntity.builder().name(request.getName()).description(request.getDescription())
+				.category(request.getCategory()).price(request.getPrice()).build();
+
+	}
+
+	private FoodResponse convertToResponse(FoodEntity entity) {
+		return FoodResponse.builder().id(entity.getId()).name(entity.getName()).description(entity.getDescription())
+				.category(entity.getCategory()).price(entity.getPrice()).imageUrl(entity.getImageUrl()).build();
 	}
 
 }
