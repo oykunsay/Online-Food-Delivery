@@ -1,9 +1,10 @@
 package com.oykunsay.foodiesapi.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import com.oykunsay.foodiesapi.io.FoodResponse;
 import com.oykunsay.foodiesapi.repository.FoodRepository;
 import com.oykunsay.foodiesapi.request.FoodRequest;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
@@ -23,13 +24,11 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FoodServiceImpl implements FoodService {
 
-	@Autowired
-	private S3Client s3Client;
-	@Autowired
-	private FoodRepository foodRepository;
+	private final S3Client s3Client;
+	private final FoodRepository foodRepository;
 
 	@Value("${aws.s3.bucketname}")
 	private String bucketName;
@@ -37,7 +36,7 @@ public class FoodServiceImpl implements FoodService {
 	@Override
 	public String uploadFile(MultipartFile file) {
 		String filenameExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-		String key = UUID.randomUUID().toString() + "." + filenameExtension;
+		String key = UUID.randomUUID().toString() + filenameExtension;
 		try {
 			PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(key)
 					.acl(ObjectCannedACL.PUBLIC_READ).contentType(file.getContentType()).build();
@@ -74,6 +73,11 @@ public class FoodServiceImpl implements FoodService {
 	private FoodResponse convertToResponse(FoodEntity entity) {
 		return FoodResponse.builder().id(entity.getId()).name(entity.getName()).description(entity.getDescription())
 				.category(entity.getCategory()).price(entity.getPrice()).imageUrl(entity.getImageUrl()).build();
+	}
+
+	@Override
+	public List<FoodResponse> readFoods() {
+		return foodRepository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
 	}
 
 }
