@@ -44,8 +44,8 @@ public class FoodServiceImpl implements FoodService {
 			PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
 			if (response.sdkHttpResponse().isSuccessful()) {
-				return "https://" + bucketName + ".s3.amazonaws.com/" + key;
-			} else {
+				return "https://s3.eu-north-1.amazonaws.com/" + bucketName + "/" + key;
+			} else { 
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload failed.");
 			}
 		} catch (IOException ex) {

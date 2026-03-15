@@ -1,21 +1,16 @@
 package com.oykunsay.foodiesapi.controller;
 
 import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*; 
 import org.springframework.web.multipart.MultipartFile;
-
 import com.oykunsay.foodiesapi.io.FoodResponse;
 import com.oykunsay.foodiesapi.request.FoodRequest;
 import com.oykunsay.foodiesapi.service.FoodService;
-
 import lombok.AllArgsConstructor;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/foods")
 @AllArgsConstructor
 public class FoodController {
@@ -24,7 +19,6 @@ public class FoodController {
 
 	@PostMapping
 	public FoodResponse addFood(@RequestPart("food") FoodRequest request, @RequestPart("file") MultipartFile file) {
-
 		return foodService.addFood(request, file);
 	}
 
@@ -33,4 +27,10 @@ public class FoodController {
 		return foodService.readFoods();
 	}
 
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteFood(@PathVariable String id) {
+		foodService.deleteFood(id);
+	}
+    
 }

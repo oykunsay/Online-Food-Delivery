@@ -11,7 +11,11 @@ public interface FoodService {
 
 	String uploadFile(MultipartFile file);
 
+	public boolean deleteFile(String fileName);
+
 	FoodResponse addFood(FoodRequest request, MultipartFile file);
 
 	List<FoodResponse> readFoods();
+
+	void deleteFood(String id);
 }

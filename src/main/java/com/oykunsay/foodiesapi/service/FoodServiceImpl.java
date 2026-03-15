@@ -19,6 +19,7 @@ import com.oykunsay.foodiesapi.request.FoodRequest;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
@@ -78,6 +79,33 @@ public class FoodServiceImpl implements FoodService {
 	@Override
 	public List<FoodResponse> readFoods() {
 		return foodRepository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
+	}
+
+	@Override
+	public void deleteFood(String id) {
+		FoodEntity existingFood = foodRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Food doesn't exist: " + id));
+
+		String imageUrl = existingFood.getImageUrl();
+		if (imageUrl != null && imageUrl.contains("/")) {
+			String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+			deleteFile(fileName);
+		}
+
+		foodRepository.deleteById(id);
+	}
+
+	@Override
+	public boolean deleteFile(String fileName) {
+		try {
+			DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(fileName)
+					.build();
+			s3Client.deleteObject(deleteObjectRequest);
+			return true;
+		} catch (Exception e) {
+			System.err.println("S3 dosya silme hatası: " + e.getMessage());
+			return false;
+		}
 	}
 
 }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { assets } from "../../assets/assets";
-
+import axios from "axios";
+import { toast } from "react-toastify";
 const AddFood = () => {
-  const [image, setImage] = useState(false);
+  const [image, setImage] = useState(null);
   const [data, setData] = useState({
     name: "",
     description: "",
@@ -16,11 +17,41 @@ const AddFood = () => {
     setData((data) => ({ ...data, [name]: value }));
   };
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = async (event) => {
     event.preventDefault();
     if (!image) {
-      alert("Please select an image");
+      toast.error("Please select an image");
       return;
+    }
+
+    const formData = new FormData();
+    const foodBlob = new Blob([JSON.stringify(data)], {
+      type: "application/json",
+    });
+
+    formData.append("food", foodBlob);
+    formData.append("file", image);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/foods",
+        formData,
+        {},
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success("Food added successfully.");
+        setData({
+          name: "",
+          description: "",
+          price: "",
+          category: "Cake",
+        });
+        setImage(null);
+      }
+    } catch (error) {
+      console.error("Error adding food:", error);
+      toast.error("Failed to add food.");
     }
   };
 
@@ -53,6 +84,7 @@ const AddFood = () => {
                 </label>
                 <input
                   type="text"
+                  placeholder="Cake"
                   className="form-control"
                   id="name"
                   required
@@ -67,6 +99,7 @@ const AddFood = () => {
                 </label>
                 <textarea
                   className="form-control"
+                  placeholder="Write content here..."
                   id="description"
                   rows="5"
                   required
@@ -99,6 +132,7 @@ const AddFood = () => {
                 </label>
                 <input
                   type="number"
+                  placeholder="&#x24;200"
                   className="form-control"
                   id="price"
                   required
