@@ -1,9 +1,10 @@
 import React from "react";
+import Menubar from "./components/Menubar/Menubar";
 
 const App = () => {
   return (
     <div>
-      <h1>Foodies App</h1>
+      <Menubar />
     </div>
   );
 };
