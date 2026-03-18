@@ -23,7 +23,7 @@ export const categories = [
     icon: pizza,
   },
   {
-    category: "Cake",
+    category: "Dessert",
     icon: cake,
   },
   {

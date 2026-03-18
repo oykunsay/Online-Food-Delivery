@@ -8,7 +8,7 @@ const AddFood = () => {
     name: "",
     description: "",
     price: "",
-    category: "Cake",
+    category: "Dessert",
   });
 
   const onChangeHandler = (event) => {
@@ -45,7 +45,7 @@ const AddFood = () => {
           name: "",
           description: "",
           price: "",
-          category: "Cake",
+          category: "Dessert",
         });
         setImage(null);
       }
@@ -84,7 +84,7 @@ const AddFood = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Cake"
+                  placeholder="Dessert"
                   className="form-control"
                   id="name"
                   required
@@ -120,8 +120,8 @@ const AddFood = () => {
                   onChange={onChangeHandler}
                   value={data.category}
                 >
-                  <option value="cake">Cake</option>
-                  <option value="main-burger">Burger</option>
+                  <option value="dessert">Dessert</option>
+                  <option value="burger">Burger</option>
                   <option value="pizza">Pizza</option>
                   <option value="salad">Salad</option>
                   <option value="fries">Fries</option>
