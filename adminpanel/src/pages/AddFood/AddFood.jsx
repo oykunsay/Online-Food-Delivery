@@ -120,10 +120,12 @@ const AddFood = () => {
                   onChange={onChangeHandler}
                   value={data.category}
                 >
-                  <option value="appetizer">Cake</option>
-                  <option value="main-course">Burger</option>
-                  <option value="dessert">Pizza</option>
-                  <option value="beverage">Salad</option>
+                  <option value="cake">Cake</option>
+                  <option value="main-burger">Burger</option>
+                  <option value="pizza">Pizza</option>
+                  <option value="salad">Salad</option>
+                  <option value="fries">Fries</option>
+                  <option value="milkshake">Milkshake</option>
                 </select>
               </div>
               <div className="mb-3">
