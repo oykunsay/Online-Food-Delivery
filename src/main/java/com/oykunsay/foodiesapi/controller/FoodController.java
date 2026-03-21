@@ -21,7 +21,10 @@ public class FoodController {
 	public FoodResponse addFood(@RequestPart("food") FoodRequest request, @RequestPart("file") MultipartFile file) {
 		return foodService.addFood(request, file);
 	}
-
+	@GetMapping("/{id}")
+	public FoodResponse getFoodById(@PathVariable String id) {
+	    return foodService.getFoodById(id); 
+	}
 	@GetMapping
 	public List<FoodResponse> readFoods() {
 		return foodService.readFoods();

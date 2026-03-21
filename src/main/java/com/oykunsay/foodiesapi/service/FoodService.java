@@ -18,4 +18,6 @@ public interface FoodService {
 	List<FoodResponse> readFoods();
 
 	void deleteFood(String id);
+
+	FoodResponse getFoodById(String id);
 }

@@ -34,24 +34,28 @@ public class FoodServiceImpl implements FoodService {
 	@Value("${aws.s3.bucketname}")
 	private String bucketName;
 
+	@Value("${aws.s3.region:eu-north-1}")
+	private String region;
+
 	@Override
 	public String uploadFile(MultipartFile file) {
 		String filenameExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 		String key = UUID.randomUUID().toString() + filenameExtension;
+
 		try {
 			PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(key)
 					.acl(ObjectCannedACL.PUBLIC_READ).contentType(file.getContentType()).build();
+
 			PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
 			if (response.sdkHttpResponse().isSuccessful()) {
-				return "https://" + bucketName + ".s3.amazonaws.com/" + key;
+				return String.format("https://s3.%s.amazonaws.com/%s/%s", region, bucketName, key);
 			} else {
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload failed.");
 			}
 		} catch (IOException ex) {
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"An error occured while uploading file.");
-
+					"An error occurred while uploading file.");
 		}
 	}
 
@@ -106,6 +110,16 @@ public class FoodServiceImpl implements FoodService {
 			System.err.println("S3 dosya silme hatası: " + e.getMessage());
 			return false;
 		}
+	}
+
+	@Override
+	public FoodResponse getFoodById(String id) {
+		FoodEntity foodEntity = foodRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Yemek bulunamadı: " + id));
+
+		return FoodResponse.builder().id(foodEntity.getId()).name(foodEntity.getName())
+				.description(foodEntity.getDescription()).price(foodEntity.getPrice())
+				.imageUrl(foodEntity.getImageUrl()).category(foodEntity.getCategory()).build();
 	}
 
 }

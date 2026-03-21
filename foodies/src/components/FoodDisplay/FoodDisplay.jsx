@@ -4,6 +4,7 @@ import FoodItem from "../FoodItem/FoodItem";
 
 const FoodDisplay = () => {
   const { foodList } = useContext(StoreContext);
+  console.log("FoodList'in ilk elemanı:", foodList[0]);
   return (
     <div className="container">
       <div className="row">
