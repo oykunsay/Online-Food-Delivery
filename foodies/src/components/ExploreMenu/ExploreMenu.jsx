@@ -41,7 +41,7 @@ const ExploreMenu = ({ category, setCategory }) => {
       >
         {categories.map((item, index) => {
           return (
-            <div key={index} className="text-center explore-menu-list-item">
+            <div key={index} className="text-center explore-menu-list-item" onClick={() => setCategory(prev => prev === item.category ? 'All': item.category)}>
               <img
                 src={item.icon}
                 alt=""
