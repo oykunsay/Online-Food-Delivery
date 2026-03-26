@@ -3,7 +3,7 @@ import { categories } from "../../assets/assets";
 import "./ExploreMenu.css";
 import { useRef } from "react";
 
-const ExploreMenu = () => {
+const ExploreMenu = ({ category, setCategory }) => {
   const menuRef = useRef(null);
   const scrollLeft = () => {
     menuRef.current.scrollBy({
@@ -45,7 +45,11 @@ const ExploreMenu = () => {
               <img
                 src={item.icon}
                 alt=""
-                className="rounded"
+                className={
+                  item.category === category
+                    ? "rounded-circle active"
+                    : "rounded-circle"
+                }
                 height={128}
                 width={128}
               />
