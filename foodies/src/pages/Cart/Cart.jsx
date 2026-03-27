@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
 import "./Cart.css";
+import { Link } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 const Cart = () => {
-  const { foodList, increaseQty, decreaseQty, quantities } =
+  const { foodList, increaseQty, decreaseQty, quantities, removeFromCart } =
     useContext(StoreContext);
   const cartItems = foodList.filter((food) => quantities[food.id] > 0);
 
@@ -67,20 +68,23 @@ const Cart = () => {
                       <p className="fw-bold">
                         &#x24;{(food.price * quantities[food.id]).toFixed(2)}
                       </p>
-                      <button className="btn btn-sm btn-outline-danger">
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => removeFromCart(food.id)}
+                      >
                         <i className="bi bi-trash"></i>
                       </button>
                     </div>
+                    <hr />
                   </div>
                 ))}
-                <hr />
               </div>
             </div>
           )}
           <div className="text-start mb-4">
-            <a href="#" className="btn btn-outline-primary">
+            <Link to="/" className="btn btn-outline-primary">
               <i className="bi bi-arrow-left me-2"></i>Continue Shopping
-            </a>
+            </Link>
           </div>
         </div>
         <div className="col-lg-4">
@@ -89,22 +93,29 @@ const Cart = () => {
               <h5 className="card-title mb-4">Order Summary</h5>
               <div className="d-flex justify-content-between mb-3">
                 <span>Subtotal</span>
-                <span>$199.97</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
               <div className="d-flex justify-content-between mb-3">
                 <span>Shipping</span>
-                <span>$10.00</span>
+                <span>
+                  &#x24;{subtotal === 0 ? "0.00" : shipping.toFixed(2)}
+                </span>
               </div>
               <div className="d-flex justify-content-between mb-3">
                 <span>Tax</span>
-                <span>$20.00</span>
+                <span>&#x24;{tax.toFixed(2)}</span>
               </div>
               <hr />
               <div className="d-flex justify-content-between mb-4">
                 <strong>Total</strong>
-                <strong>$229.97</strong>
+                <strong>
+                  &#x24;{subtotal === 0 ? "0.00" : total.toFixed(2)}
+                </strong>
               </div>
-              <button className="btn btn-primary w-100">
+              <button
+                className="btn btn-primary w-100"
+                disabled={cartItems.length === 0}
+              >
                 Proceed to Checkout
               </button>
             </div>

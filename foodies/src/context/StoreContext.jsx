@@ -21,6 +21,14 @@ export const StoreContextProvider = (props) => {
     }));
   };
 
+  const removeFromCart = (foodId) => {
+    setQuantities((prevQuantities) => {
+      const updatedQuantities = { ...prevQuantities };
+      delete updatedQuantities[foodId];
+      return updatedQuantities;
+    });
+  };
+
   const fetchFoodList = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/foods");
@@ -40,6 +48,7 @@ export const StoreContextProvider = (props) => {
     increaseQty,
     decreaseQty,
     quantities,
+    removeFromCart,
   };
 
   return (
