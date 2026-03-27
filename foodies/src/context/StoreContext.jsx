@@ -5,6 +5,21 @@ export const StoreContext = createContext(null);
 
 export const StoreContextProvider = (props) => {
   const [foodList, setFoodList] = useState([]);
+  const [quantities, setQuantities] = useState({});
+
+  const increaseQty = (foodId) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [foodId]: (prev[foodId] || 0) + 1,
+    }));
+  };
+
+  const decreaseQty = (foodId) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [foodId]: Math.max((prev[foodId] || 0) - 1, 0),
+    }));
+  };
 
   const fetchFoodList = async () => {
     try {
@@ -22,7 +37,9 @@ export const StoreContextProvider = (props) => {
 
   const contextValue = {
     foodList,
-    fetchFoodList,
+    increaseQty,
+    decreaseQty,
+    quantities,
   };
 
   return (
