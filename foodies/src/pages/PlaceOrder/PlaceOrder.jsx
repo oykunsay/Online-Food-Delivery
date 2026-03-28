@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./PlaceOrder.css";
+import { StoreContext } from "../../context/StoreContext";
 import { assets } from "../../assets/assets";
+
 const PlaceOrder = () => {
+  const { foodList, quantities, setQuantities } = useContext(StoreContext);
+
+  const cartItems = foodList.filter((food) => quantities[food.id] > 0);
+
+  const subtotal = cartItems.reduce(
+    (acc, food) => acc + food.price * quantities[food.id],
+    0,
+  );
+  const shipping = subtotal === 0 ? 0.0 : 10;
+  const tax = subtotal * 0.1;
+  const total = subtotal + shipping + tax;
+
   return (
     <div className="container mt-4">
       <main>
         <div className="py-5 text-center">
           <img
-            className="d-block mx-auto mb-4"
+            className="d-block mx-auto"
             src={assets.logo}
             alt=""
             width={98}
@@ -19,48 +33,49 @@ const PlaceOrder = () => {
             <h4 className="d-flex justify-content-between align-items-center mb-3">
               <span className="text-primary">Your cart</span>
 
-              <span className="badge bg-primary rounded-pill">3</span>
+              <span className="badge bg-primary rounded-pill">
+                {cartItems.length}
+              </span>
             </h4>
 
             <ul className="list-group mb-3">
-              <li className="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                  <h6 className="my-0">Product name</h6>
+              {cartItems.map((item) => (
+                <li className="list-group-item d-flex justify-content-between lh-sm">
+                  <div>
+                    <h6 className="my-0">{item.name} </h6>
+                    <small className="text-body-secondary">
+                      Qty: {quantities[item.id]}
+                    </small>
+                  </div>
+                  <span className="text-body-secondary">
+                    &#x24;{item.price * quantities[item.id]}
+                  </span>
+                </li>
+              ))}
 
-                  <small className="text-body-secondary">
-                    Brief description
-                  </small>
+              <li className="list-group-item d-flex justify-content-between">
+                <div>
+                  <span>Shipping</span>
                 </div>
 
-                <span className="text-body-secondary">$12</span>
-              </li>
-
-              <li className="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                  <h6 className="my-0">Second product</h6>
-
-                  <small className="text-body-secondary">
-                    Brief description
-                  </small>
-                </div>
-
-                <span className="text-body-secondary">$8</span>
-              </li>
-
-              <li className="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                  <h6 className="my-0">Third item</h6>
-
-                  <small className="text-body-secondary">
-                    Brief description
-                  </small>
-                </div>
-
-                <span className="text-body-secondary">&#x24;5</span>
+                <span className="text-body-secondary">
+                  &#x24;{subtotal === 0 ? 0.0 : shipping.toFixed(2)}
+                </span>
               </li>
 
               <li className="list-group-item d-flex justify-content-between">
-                <span>Total (USD)</span> <strong>&#x24;20</strong>
+                <div>
+                  <span className="text-body-secondary">Tax (10%)</span>
+                </div>
+
+                <span className="text-body-secondary">
+                  &#x24;{tax.toFixed(2)}
+                </span>
+              </li>
+
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Total (USD)</span>{" "}
+                <strong>&#x24;{total.toFixed(2)}</strong>
               </li>
             </ul>
           </div>
@@ -79,7 +94,7 @@ const PlaceOrder = () => {
                     type="text"
                     className="form-control"
                     id="firstName"
-                    placeholder=""
+                    placeholder="Jhon"
                     value=""
                     required
                   />
@@ -94,7 +109,7 @@ const PlaceOrder = () => {
                     type="text"
                     className="form-control"
                     id="lastName"
-                    placeholder=""
+                    placeholder="Doe"
                     value=""
                     required
                   />
@@ -172,7 +187,11 @@ const PlaceOrder = () => {
                 </div>
               </div>
               <hr className="my-4" />
-              <button className="w-100 btn btn-primary btn-lg" type="submit">
+              <button
+                className="w-100 btn btn-primary btn-lg"
+                type="submit"
+                disabled={cartItems.length === 0}
+              >
                 Continue to checkout
               </button>
             </form>
