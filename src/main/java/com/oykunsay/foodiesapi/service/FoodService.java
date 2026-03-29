@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.oykunsay.foodiesapi.io.FoodRequest;
 import com.oykunsay.foodiesapi.io.FoodResponse;
-import com.oykunsay.foodiesapi.request.FoodRequest;
 
 public interface FoodService {
 

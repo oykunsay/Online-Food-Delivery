@@ -4,8 +4,9 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*; 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.oykunsay.foodiesapi.io.FoodRequest;
 import com.oykunsay.foodiesapi.io.FoodResponse;
-import com.oykunsay.foodiesapi.request.FoodRequest;
 import com.oykunsay.foodiesapi.service.FoodService;
 import lombok.AllArgsConstructor;
 

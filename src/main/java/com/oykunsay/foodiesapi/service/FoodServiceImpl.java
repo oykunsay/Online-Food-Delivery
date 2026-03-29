@@ -12,9 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.oykunsay.foodiesapi.entity.FoodEntity;
+import com.oykunsay.foodiesapi.io.FoodRequest;
 import com.oykunsay.foodiesapi.io.FoodResponse;
 import com.oykunsay.foodiesapi.repository.FoodRepository;
-import com.oykunsay.foodiesapi.request.FoodRequest;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -107,7 +107,7 @@ public class FoodServiceImpl implements FoodService {
 			s3Client.deleteObject(deleteObjectRequest);
 			return true;
 		} catch (Exception e) {
-			System.err.println("S3 dosya silme hatası: " + e.getMessage());
+			System.err.println("S3 deleting file error: " + e.getMessage());
 			return false;
 		}
 	}
@@ -115,7 +115,7 @@ public class FoodServiceImpl implements FoodService {
 	@Override
 	public FoodResponse getFoodById(String id) {
 		FoodEntity foodEntity = foodRepository.findById(id)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Yemek bulunamadı: " + id));
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Food doesn't exist: " + id));
 
 		return FoodResponse.builder().id(foodEntity.getId()).name(foodEntity.getName())
 				.description(foodEntity.getDescription()).price(foodEntity.getPrice())
