@@ -1,5 +1,10 @@
 package com.oykunsay.foodiesapi.service;
 
+import com.oykunsay.foodiesapi.io.CartRequest;
+import com.oykunsay.foodiesapi.io.CartResponse;
+
 public interface CartService {
-	void addToCart(String foodId);
+	CartResponse addToCart(CartRequest request);
+
+	CartResponse getCart();
 }

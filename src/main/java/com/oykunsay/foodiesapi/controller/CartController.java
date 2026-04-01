@@ -1,13 +1,14 @@
 package com.oykunsay.foodiesapi.controller;
 
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.oykunsay.foodiesapi.io.CartRequest;
+import com.oykunsay.foodiesapi.io.CartResponse;
 import com.oykunsay.foodiesapi.service.CartService;
 
 import lombok.AllArgsConstructor;
@@ -20,13 +21,12 @@ public class CartController {
 	private final CartService cartService;
 
 	@PostMapping
-	public ResponseEntity<?> addToCart(@RequestBody Map<String, String> request) {
-		String foodId = request.get("foodId");
+	public CartResponse addToCart(@RequestBody CartRequest request) {
+		String foodId = request.getFoodId();
 		if (foodId == null || foodId.isEmpty()) {
-			return ResponseEntity.badRequest().body("Food Id is required");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "foodId not found");
 		}
-		cartService.addToCart(foodId);
-		return ResponseEntity.ok().body(null);
+		return cartService.addToCart(request);
 	}
 
 }
