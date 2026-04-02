@@ -1,8 +1,43 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../service/authService";
+import { StoreContext } from "../../context/StoreContext";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const { setToken } = useContext(StoreContext);
+  const navigate = useNavigate();
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const onChangeHandler = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setData((data) => ({ ...data, [name]: value }));
+  };
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await login(data);
+      if (response.status === 200) {
+        setToken(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        navigate("/");
+      } else {
+        toast.error(
+          "Login failed. Please check your credentials and try again.",
+        );
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      toast.error("An error occurred during login. Please try again.");
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="row">
@@ -12,44 +47,52 @@ const Login = () => {
               <h5 className="card-title text-center mb-5 fw-light fs-5">
                 Sign In
               </h5>
+              <form onSubmit={onSubmitHandler}>
+                <div className="form-floating mb-3">
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="floatingInput"
+                    placeholder="name@example.com"
+                    name="email"
+                    onChange={onChangeHandler}
+                    value={data.email}
+                  />
+                  <label htmlFor="floatingInput">Email address</label>
+                </div>
 
-              <div className="form-floating mb-3">
-                <input
-                  type="email"
-                  className="form-control"
-                  id="floatingInput"
-                  placeholder="name@example.com"
-                />
-                <label htmlFor="floatingInput">Email address</label>
-              </div>
+                <div className="form-floating mb-3">
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="floatingPassword"
+                    placeholder="Password"
+                    name="password"
+                    onChange={onChangeHandler}
+                    value={data.password}
+                  />
+                  <label htmlFor="floatingPassword">Password</label>
+                </div>
 
-              <div className="form-floating mb-3">
-                <input
-                  type="password"
-                  className="form-control"
-                  id="floatingPassword"
-                  placeholder="Password"
-                />
-                <label htmlFor="floatingPassword">Password</label>
-              </div>
-
-              <div className="d-grid">
-                <button
-                  className="btn btn-outline-primary btn-login text-uppercase "
-                  type="submit"
-                >
-                  Sign up
-                </button>
-                <button
-                  className="btn btn-outline-danger btn-login text-uppercase mt-2"
-                  type="reset"
-                >
-                  Reset
-                </button>
-              </div>
-              <div className="mt-4">
-                Don't have an account? <Link to="/register">Sign Up</Link>
-              </div>
+                <div className="d-grid">
+                  <button
+                    className="btn btn-outline-primary btn-login text-uppercase"
+                    type="submit"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    className="btn btn-outline-danger btn-login text-uppercase mt-2"
+                    type="reset"
+                  >
+                    Reset
+                  </button>
+                </div>
+                <div className="mt-4">
+                  {"Don't have an account? "}
+                  <Link to="/register">Sign Up</Link>
+                </div>
+              </form>
             </div>
           </div>
         </div>

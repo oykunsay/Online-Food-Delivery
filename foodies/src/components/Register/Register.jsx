@@ -3,6 +3,7 @@ import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { registerUser } from "../../service/authService";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,20 +22,15 @@ const Register = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const respone = await axios.post(
-        "http://localhost:8080/api/register",
-        data,
-      );
+      const response = await registerUser(data);
       if (respone.status === 201) {
         toast.success("Registration completed. Please log in.");
         navigate("/login");
       } else {
         toast.error("Registration failed. Please try again.");
       }
-      console.log("Registration successful:", respone.data);
     } catch (error) {
       toast.error("Registration failed. Please try again.");
-      console.error("Registration error:", error);
     }
   };
 
