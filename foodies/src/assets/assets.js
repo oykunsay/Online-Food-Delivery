@@ -7,10 +7,12 @@ import burger from "./burger.png";
 import salad from "./salad.png";
 import fries from "./fries.png";
 import milkshake from "./milkshake.png";
+import profile from "./user.png";
 
 export const assets = {
   logo,
   cart,
+  profile,
 };
 
 export const categories = [

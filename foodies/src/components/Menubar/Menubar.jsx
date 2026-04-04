@@ -116,7 +116,7 @@ const Menubar = () => {
             ) : (
               <div className="dropdown text-end">
                 <img
-                  src=""
+                  src={assets.profile}
                   alt=""
                   width={32}
                   height={32}
@@ -125,16 +125,14 @@ const Menubar = () => {
                   aria-expanded="false"
                   style={{ cursor: "pointer" }}
                 />
-                <ul className="dropdown-menu dropdown-menu-end text-small shadow">
+                <ul className="dropdown-menu text-small cursor-pointer">
                   <li
                     className="dropdown-item"
                     onClick={() => navigate("/myorders")}
                   >
                     Orders
                   </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
+
                   <li className="dropdown-item" onClick={logout}>
                     Logout
                   </li>
