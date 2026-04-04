@@ -7,12 +7,18 @@ import { useNavigate } from "react-router-dom";
 
 const Menubar = () => {
   const [active, setActive] = useState("home");
-  const { quantities } = useContext(StoreContext);
+  const { quantities, token, setToken } = useContext(StoreContext);
   const uniqueItemsInCart = Object.values(quantities).filter(
     (qty) => qty > 0,
   ).length;
 
   const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    navigate("/");
+  };
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container">
@@ -90,20 +96,51 @@ const Menubar = () => {
                 </span>
               </div>
             </Link>
-            <button
-              className="btn btn-outline-primary"
-              type="submit"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
-            <button
-              className="btn btn-outline-success"
-              type="submit"
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </button>
+            {!token ? (
+              <>
+                <button
+                  className="btn btn-outline-primary"
+                  type="submit"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </button>
+                <button
+                  className="btn btn-outline-success"
+                  type="submit"
+                  onClick={() => navigate("/register")}
+                >
+                  Register
+                </button>
+              </>
+            ) : (
+              <div className="dropdown text-end">
+                <img
+                  src=""
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="rounded-circle dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  style={{ cursor: "pointer" }}
+                />
+                <ul className="dropdown-menu dropdown-menu-end text-small shadow">
+                  <li
+                    className="dropdown-item"
+                    onClick={() => navigate("/myorders")}
+                  >
+                    Orders
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li className="dropdown-item" onClick={logout}>
+                    Logout
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
