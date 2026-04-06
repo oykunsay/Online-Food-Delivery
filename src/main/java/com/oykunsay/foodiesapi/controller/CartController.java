@@ -23,7 +23,7 @@ public class CartController {
 
 	private final CartService cartService;
 
-	@PostMapping
+	@PostMapping("/add")
 	public CartResponse addToCart(@RequestBody CartRequest request) {
 		String foodId = request.getFoodId();
 		if (foodId == null || foodId.isEmpty()) {
