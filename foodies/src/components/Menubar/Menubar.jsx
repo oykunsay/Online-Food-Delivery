@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 const Menubar = () => {
   const [active, setActive] = useState("home");
-  const { quantities, token, setToken } = useContext(StoreContext);
+  const { quantities, token, setToken, setQuantities } =
+    useContext(StoreContext);
   const uniqueItemsInCart = Object.values(quantities).filter(
     (qty) => qty > 0,
   ).length;
@@ -17,6 +18,7 @@ const Menubar = () => {
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
+    setQuantities({});
     navigate("/");
   };
   return (
@@ -117,7 +119,7 @@ const Menubar = () => {
               <div className="dropdown text-end">
                 <img
                   src={assets.profile}
-                  alt=""
+                  alt="Profile"
                   width={32}
                   height={32}
                   className="rounded-circle dropdown-toggle"
@@ -125,16 +127,21 @@ const Menubar = () => {
                   aria-expanded="false"
                   style={{ cursor: "pointer" }}
                 />
-                <ul className="dropdown-menu text-small cursor-pointer">
+                <ul
+                  className="dropdown-menu dropdown-menu-end text-small"
+                  style={{ cursor: "pointer" }}
+                >
                   <li
                     className="dropdown-item"
                     onClick={() => navigate("/myorders")}
                   >
-                    Orders
+                    <i className="bi bi-bag me-2"></i> Orders
                   </li>
-
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>{" "}
                   <li className="dropdown-item" onClick={logout}>
-                    Logout
+                    <i className="bi bi-box-arrow-right me-2"></i> Logout
                   </li>
                 </ul>
               </div>
