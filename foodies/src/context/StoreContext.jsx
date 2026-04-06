@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import addToCartApi, { removeFromCart as removeFromCartApi, fetchCartData } from "../service/cartService";
 
 export const StoreContext = createContext(null);
 
@@ -15,46 +16,29 @@ export const StoreContextProvider = (props) => {
       ...prev,
       [foodId]: (prev[foodId] || 0) + 1,
     }));
-
     if (token) {
-      try {
-        const response = await axios.post(
-          `${url}/api/cart/add`,
-          { foodId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setQuantities(response.data.items);
-      } catch (error) {
-        console.error("Ekleme hatası:", error);
-      }
+      await addToCartApi(foodId, token);
     }
   };
 
   const decreaseQty = async (foodId) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [foodId]: Math.max((prev[foodId] || 0) - 1, 0),
-    }));
-
-    if (token) {
-      try {
-        const response = await axios.post(
-          `${url}/api/cart/remove`,
-          { foodId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setQuantities(response.data.items);
-      } catch (error) {
-        console.error("Azaltma hatası:", error);
+    if (quantities[foodId] > 0) {
+      setQuantities((prev) => ({
+        ...prev,
+        [foodId]: prev[foodId] - 1,
+      }));
+      
+      if (token) {
+        await removeFromCartApi(foodId, token);
       }
     }
   };
 
-  const removeFromCart = (foodId) => {
-    setQuantities((prevQuantities) => {
-      const updatedQuantities = { ...prevQuantities };
-      delete updatedQuantities[foodId];
-      return updatedQuantities;
+  const removeCompletelyFromCart = (foodId) => {
+    setQuantities((prev) => {
+      const updated = { ...prev };
+      delete updated[foodId];
+      return updated;
     });
   };
 
@@ -69,12 +53,10 @@ export const StoreContextProvider = (props) => {
 
   const loadCartData = async (tokenValue) => {
     try {
-      const response = await axios.get(`${url}/api/cart`, {
-        headers: { Authorization: `Bearer ${tokenValue}` },
-      });
-      setQuantities(response.data.items || {});
+      const items = await fetchCartData(tokenValue);
+      setQuantities(items || {});
     } catch (error) {
-      console.error("Sepet verisi çekilemedi:", error);
+      console.error("Sepet verisi yüklenemedi:", error);
     }
   };
 
@@ -95,10 +77,12 @@ export const StoreContextProvider = (props) => {
     increaseQty,
     decreaseQty,
     quantities,
-    removeFromCart,
+    removeFromCart: removeCompletelyFromCart,
     token,
     setToken,
-    url
+    url,
+    setQuantities,
+    loadCartData,
   };
 
   return (
