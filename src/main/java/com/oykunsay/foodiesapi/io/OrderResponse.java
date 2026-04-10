@@ -1,29 +1,21 @@
-package com.oykunsay.foodiesapi.entity;
+package com.oykunsay.foodiesapi.io;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
 import lombok.Builder;
 import lombok.Data;
-import com.oykunsay.foodiesapi.io.OrderItem;
 
-@Document(collection = "orders")
 @Data
 @Builder
-public class OrderEntity {
-	@Id
+public class OrderResponse {
 	private String id;
 	private String userId;
 	private String userAddress;
 	private String phoneNumber;
 	private String email;
-	private List<OrderItem> orderedItems;
 	private double amount;
 	private String paymentStatus;
-
 	private String paymentId;
 	private String paymentToken;
 	private String basketId;
-
 	private String orderStatus;
+	private String paymentFormHtml;
 }
